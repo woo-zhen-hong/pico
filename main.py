@@ -25,6 +25,7 @@ lcd.hide_cursor()
 
 # 初始化舵機
 servo = mservo.Servo(16, True)
+servo.rotate(190)
 
 # 初始化按鈕
 button = Pin(4, Pin.IN, Pin.PULL_DOWN)
@@ -40,18 +41,19 @@ def showCrime():
     crime = mcrime.Crime(index, url=URL)
     crime.info()
     # LCD顯示年度、月份、案件別、發生數、破獲數
-    year = crime.year[0:3]
+    year = crime.year[0:4]
     month = crime.month
     crimetype = crime.type
     happen = crime.happen
     clear = crime.clear
     lcd.clear()
-    lcd.putstr('{} {} {}'.format(year, month, crimetype[0:1]))
-    lcd.putstr('\n{} {}'.format(happen, clear))
+    lcd.putstr('{} {} {}\n'.format(year, month, crimetype[0]))
     if (crime.percent[2] == '.'):
+        lcd.putstr('{} {} {}%'.format(happen, clear, crime.percent[0:2]))
         # 調整舵機角度
         servo.rotate(190 - (int(crime.percent[0:2]) / 100 * 190))
     else:
+        lcd.putstr('{} {} {}%'.format(happen, clear, 100))
         # 調整舵機角度
         servo.rotate(190 - (100) / 100 * 190)
 
@@ -60,7 +62,7 @@ while True:
     if button.value() == 1:
         index += 1
         showCrime()    
-    sleep(0.3)
+    sleep(0.1)
 
 
 
